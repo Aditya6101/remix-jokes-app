@@ -384,72 +384,170 @@ function JokesIndexRoute() {
 // app/routes/jokes/new.tsx
 var new_exports = {};
 __export(new_exports, {
+  action: () => action,
   default: () => NewJokeRoute
 });
+var import_node5 = require("@remix-run/node"), import_react7 = require("@remix-run/react");
+
+// app/utils/request.server.ts
+var import_node4 = require("@remix-run/node"), badRequest = (data) => (0, import_node4.json)(data, { status: 400 });
+
+// app/routes/jokes/new.tsx
 var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime");
+function validateJokeContent(content) {
+  if (content.length < 10)
+    return "That joke is too short";
+}
+function validateJokeName(name) {
+  if (name.length < 3)
+    return "That joke's name is too short";
+}
+var action = async ({ request }) => {
+  let form = await request.formData(), name = form.get("name"), content = form.get("content");
+  if (typeof name != "string" || typeof content != "string")
+    return badRequest({
+      fieldErrors: null,
+      fields: null,
+      formError: "Form not submitted correctly."
+    });
+  let fieldErrors = {
+    name: validateJokeName(name),
+    content: validateJokeContent(content)
+  }, fields = { name, content };
+  if (Object.values(fieldErrors).some(Boolean))
+    return badRequest({
+      fieldErrors,
+      fields,
+      formError: null
+    });
+  let joke = await db.joke.create({ data: fields });
+  return (0, import_node5.redirect)(`/jokes/${joke.id}`);
+};
 function NewJokeRoute() {
+  var _a, _b, _c, _d, _e, _f, _g, _h;
+  let actionData = (0, import_react7.useActionData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { children: "Add your own hilarious joke" }, void 0, !1, {
       fileName: "app/routes/jokes/new.tsx",
-      lineNumber: 4,
+      lineNumber: 54,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("form", { method: "post", children: [
-      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("label", { children: [
-        "Name: ",
-        /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("input", { type: "text", name: "name" }, void 0, !1, {
+      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("label", { children: [
+          "Name:",
+          " ",
+          /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(
+            "input",
+            {
+              type: "text",
+              defaultValue: (_a = actionData == null ? void 0 : actionData.fields) == null ? void 0 : _a.name,
+              name: "name",
+              "aria-invalid": Boolean((_b = actionData == null ? void 0 : actionData.fieldErrors) == null ? void 0 : _b.name) || void 0,
+              "aria-errormessage": (_c = actionData == null ? void 0 : actionData.fieldErrors) != null && _c.name ? "name-error" : void 0
+            },
+            void 0,
+            !1,
+            {
+              fileName: "app/routes/jokes/new.tsx",
+              lineNumber: 59,
+              columnNumber: 13
+            },
+            this
+          )
+        ] }, void 0, !0, {
           fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 8,
-          columnNumber: 19
+          lineNumber: 57,
+          columnNumber: 11
+        }, this),
+        (_d = actionData == null ? void 0 : actionData.fieldErrors) != null && _d.name ? /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { className: "form-validation-error", role: "alert", id: "name-error", children: actionData.fieldErrors.name }, void 0, !1, {
+          fileName: "app/routes/jokes/new.tsx",
+          lineNumber: 70,
+          columnNumber: 13
+        }, this) : null
+      ] }, void 0, !0, {
+        fileName: "app/routes/jokes/new.tsx",
+        lineNumber: 56,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
+        /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("label", { children: [
+          "Content:",
+          " ",
+          /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(
+            "textarea",
+            {
+              defaultValue: (_e = actionData == null ? void 0 : actionData.fields) == null ? void 0 : _e.content,
+              name: "content",
+              "aria-invalid": Boolean((_f = actionData == null ? void 0 : actionData.fieldErrors) == null ? void 0 : _f.content) || void 0,
+              "aria-errormessage": (_g = actionData == null ? void 0 : actionData.fieldErrors) != null && _g.content ? "content-error" : void 0
+            },
+            void 0,
+            !1,
+            {
+              fileName: "app/routes/jokes/new.tsx",
+              lineNumber: 78,
+              columnNumber: 13
+            },
+            this
+          )
+        ] }, void 0, !0, {
+          fileName: "app/routes/jokes/new.tsx",
+          lineNumber: 76,
+          columnNumber: 11
+        }, this),
+        (_h = actionData == null ? void 0 : actionData.fieldErrors) != null && _h.content ? /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(
+          "p",
+          {
+            className: "form-validation-error",
+            role: "alert",
+            id: "content-error",
+            children: actionData.fieldErrors.content
+          },
+          void 0,
+          !1,
+          {
+            fileName: "app/routes/jokes/new.tsx",
+            lineNumber: 90,
+            columnNumber: 13
+          },
+          this
+        ) : null
+      ] }, void 0, !0, {
+        fileName: "app/routes/jokes/new.tsx",
+        lineNumber: 75,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
+        actionData != null && actionData.formError ? /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { className: "form-validation-error", role: "alert", children: actionData.formError }, void 0, !1, {
+          fileName: "app/routes/jokes/new.tsx",
+          lineNumber: 101,
+          columnNumber: 13
+        }, this) : null,
+        /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("button", { type: "submit", className: "button", children: "Add" }, void 0, !1, {
+          fileName: "app/routes/jokes/new.tsx",
+          lineNumber: 105,
+          columnNumber: 11
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 7,
-        columnNumber: 11
-      }, this) }, void 0, !1, {
-        fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 6,
-        columnNumber: 9
-      }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("label", { children: [
-        "Content: ",
-        /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("textarea", { name: "content" }, void 0, !1, {
-          fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 13,
-          columnNumber: 22
-        }, this)
-      ] }, void 0, !0, {
-        fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 12,
-        columnNumber: 11
-      }, this) }, void 0, !1, {
-        fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 11,
-        columnNumber: 9
-      }, this),
-      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("button", { type: "submit", className: "button", children: "Add" }, void 0, !1, {
-        fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 17,
-        columnNumber: 11
-      }, this) }, void 0, !1, {
-        fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 16,
+        lineNumber: 99,
         columnNumber: 9
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/jokes/new.tsx",
-      lineNumber: 5,
+      lineNumber: 55,
       columnNumber: 7
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/jokes/new.tsx",
-    lineNumber: 3,
+    lineNumber: 53,
     columnNumber: 5
   }, this);
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "cd761578", entry: { module: "/build/entry.client-KE3YKTU2.js", imports: ["/build/_shared/chunk-XOXEVBWK.js", "/build/_shared/chunk-EETRBLDB.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-Q2DEWVGD.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-ZTIZXQDC.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes": { id: "routes/jokes", parentId: "root", path: "jokes", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes-BWDNOKXO.js", imports: ["/build/_shared/chunk-MT4Q33B6.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/$jokeId": { id: "routes/jokes/$jokeId", parentId: "routes/jokes", path: ":jokeId", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/$jokeId-AEZLQJNQ.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/index": { id: "routes/jokes/index", parentId: "routes/jokes", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/jokes/index-PQAGTEE6.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/new": { id: "routes/jokes/new", parentId: "routes/jokes", path: "new", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/new-5SZUUFWH.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-CD761578.js" };
+var assets_manifest_default = { version: "33988d03", entry: { module: "/build/entry.client-RQKL7IE4.js", imports: ["/build/_shared/chunk-VZYUX5HN.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-XI4ZCLOP.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-SQRTHMOX.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes": { id: "routes/jokes", parentId: "root", path: "jokes", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes-OJYXSG3G.js", imports: ["/build/_shared/chunk-4MRGMPBM.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/$jokeId": { id: "routes/jokes/$jokeId", parentId: "routes/jokes", path: ":jokeId", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/$jokeId-CQ6ZK47H.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/index": { id: "routes/jokes/index", parentId: "routes/jokes", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/jokes/index-RAIB7EXL.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/new": { id: "routes/jokes/new", parentId: "routes/jokes", path: "new", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/new-RUWQVEOB.js", imports: void 0, hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-33988D03.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public\\build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
