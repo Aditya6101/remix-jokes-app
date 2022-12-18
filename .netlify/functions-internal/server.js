@@ -52,6 +52,7 @@ function handleRequest(request, responseStatusCode, responseHeaders, remixContex
 // app/root.tsx
 var root_exports = {};
 __export(root_exports, {
+  CatchBoundary: () => CatchBoundary,
   ErrorBoundary: () => ErrorBoundary,
   default: () => App,
   links: () => links
@@ -139,25 +140,45 @@ function App() {
     columnNumber: 5
   }, this);
 }
+function CatchBoundary() {
+  let caught = (0, import_react2.useCatch)();
+  return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(Document, { title: `${caught.status} ${caught.statusText}`, children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "error-container", children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("h1", { children: [
+    caught.status,
+    " ",
+    caught.statusText
+  ] }, void 0, !0, {
+    fileName: "app/root.tsx",
+    lineNumber: 63,
+    columnNumber: 9
+  }, this) }, void 0, !1, {
+    fileName: "app/root.tsx",
+    lineNumber: 62,
+    columnNumber: 7
+  }, this) }, void 0, !1, {
+    fileName: "app/root.tsx",
+    lineNumber: 61,
+    columnNumber: 5
+  }, this);
+}
 function ErrorBoundary({ error }) {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)(Document, { title: "Uh-oh!", children: /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("div", { className: "error-container", children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("h1", { children: "App Error" }, void 0, !1, {
       fileName: "app/root.tsx",
-      lineNumber: 61,
+      lineNumber: 75,
       columnNumber: 9
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime2.jsxDEV)("pre", { children: error.message }, void 0, !1, {
       fileName: "app/root.tsx",
-      lineNumber: 62,
+      lineNumber: 76,
       columnNumber: 9
     }, this)
   ] }, void 0, !0, {
     fileName: "app/root.tsx",
-    lineNumber: 60,
+    lineNumber: 74,
     columnNumber: 7
   }, this) }, void 0, !1, {
     fileName: "app/root.tsx",
-    lineNumber: 59,
+    lineNumber: 73,
     columnNumber: 5
   }, this);
 }
@@ -451,6 +472,7 @@ function JokesRoute() {
 // app/routes/jokes/$jokeId.tsx
 var jokeId_exports = {};
 __export(jokeId_exports, {
+  CatchBoundary: () => CatchBoundary2,
   ErrorBoundary: () => ErrorBoundary2,
   default: () => JokeRoute,
   loader: () => loader3
@@ -461,7 +483,9 @@ var import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), loader3 = async 
     where: { id: params.jokeId }
   });
   if (!joke)
-    throw new Error("Joke not found");
+    throw new Response("What a joke! Not found.", {
+      status: 404
+    });
   return (0, import_node4.json)({ joke });
 };
 function JokeRoute() {
@@ -469,12 +493,12 @@ function JokeRoute() {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("p", { children: "Here's your hilarious joke:" }, void 0, !1, {
       fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 24,
+      lineNumber: 26,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("p", { children: data.joke.content }, void 0, !1, {
       fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 25,
+      lineNumber: 27,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Link, { to: ".", children: [
@@ -482,20 +506,34 @@ function JokeRoute() {
       " Permalink"
     ] }, void 0, !0, {
       fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 26,
+      lineNumber: 28,
       columnNumber: 7
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/jokes/$jokeId.tsx",
-    lineNumber: 23,
+    lineNumber: 25,
     columnNumber: 5
   }, this);
+}
+function CatchBoundary2() {
+  let caught = (0, import_react5.useCatch)(), params = (0, import_react5.useParams)();
+  if (caught.status === 404)
+    return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: [
+      'Huh? What the heck is "',
+      params.jokeId,
+      '"?'
+    ] }, void 0, !0, {
+      fileName: "app/routes/jokes/$jokeId.tsx",
+      lineNumber: 38,
+      columnNumber: 7
+    }, this);
+  throw new Error(`Unhandled error: ${caught.status}`);
 }
 function ErrorBoundary2() {
   let { jokeId } = (0, import_react5.useParams)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: `There was an error loading joke by the id ${jokeId}. Sorry.` }, void 0, !1, {
     fileName: "app/routes/jokes/$jokeId.tsx",
-    lineNumber: 34,
+    lineNumber: 49,
     columnNumber: 5
   }, this);
 }
@@ -503,6 +541,7 @@ function ErrorBoundary2() {
 // app/routes/jokes/index.tsx
 var jokes_exports2 = {};
 __export(jokes_exports2, {
+  CatchBoundary: () => CatchBoundary3,
   ErrorBoundary: () => ErrorBoundary3,
   default: () => JokesIndexRoute,
   loader: () => loader4
@@ -513,6 +552,10 @@ var import_jsx_dev_runtime6 = require("react/jsx-dev-runtime"), loader4 = async 
     take: 1,
     skip: randomRowNumber
   });
+  if (!randomJoke)
+    throw new Response("No random joke found", {
+      status: 404
+    });
   return (0, import_node5.json)({ randomJoke });
 };
 function JokesIndexRoute() {
@@ -520,12 +563,12 @@ function JokesIndexRoute() {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)("div", { children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)("p", { children: "Here's a random joke:" }, void 0, !1, {
       fileName: "app/routes/jokes/index.tsx",
-      lineNumber: 22,
+      lineNumber: 28,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)("p", { children: data.randomJoke.content }, void 0, !1, {
       fileName: "app/routes/jokes/index.tsx",
-      lineNumber: 23,
+      lineNumber: 29,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)(import_react6.Link, { to: data.randomJoke.id, children: [
@@ -534,19 +577,29 @@ function JokesIndexRoute() {
       '" Permalink'
     ] }, void 0, !0, {
       fileName: "app/routes/jokes/index.tsx",
-      lineNumber: 24,
+      lineNumber: 30,
       columnNumber: 7
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/jokes/index.tsx",
-    lineNumber: 21,
+    lineNumber: 27,
     columnNumber: 5
   }, this);
+}
+function CatchBoundary3() {
+  let caught = (0, import_react6.useCatch)();
+  if (caught.status === 404)
+    return /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)("div", { className: "error-container", children: "There are no jokes to display." }, void 0, !1, {
+      fileName: "app/routes/jokes/index.tsx",
+      lineNumber: 40,
+      columnNumber: 7
+    }, this);
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 function ErrorBoundary3() {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime6.jsxDEV)("div", { className: "error-container", children: "I did a whoopsies." }, void 0, !1, {
     fileName: "app/routes/jokes/index.tsx",
-    lineNumber: 30,
+    lineNumber: 47,
     columnNumber: 10
   }, this);
 }
@@ -554,17 +607,23 @@ function ErrorBoundary3() {
 // app/routes/jokes/new.tsx
 var new_exports = {};
 __export(new_exports, {
+  CatchBoundary: () => CatchBoundary4,
   ErrorBoundary: () => ErrorBoundary4,
   action: () => action2,
-  default: () => NewJokeRoute
+  default: () => NewJokeRoute,
+  loader: () => loader5
 });
-var import_node7 = require("@remix-run/node"), import_react7 = require("@remix-run/react");
+var import_node7 = require("@remix-run/node"), import_node8 = require("@remix-run/node"), import_react7 = require("@remix-run/react");
 
 // app/utils/request.server.ts
 var import_node6 = require("@remix-run/node"), badRequest = (data) => (0, import_node6.json)(data, { status: 400 });
 
 // app/routes/jokes/new.tsx
-var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime");
+var import_jsx_dev_runtime7 = require("react/jsx-dev-runtime"), loader5 = async ({ request }) => {
+  if (!await getUserId(request))
+    throw new Response("Unauthorized", { status: 401 });
+  return (0, import_node7.json)({});
+};
 function validateJokeContent(content) {
   if (content.length < 10)
     return "That joke is too short";
@@ -594,7 +653,7 @@ var action2 = async ({ request }) => {
   let joke = await db.joke.create({
     data: { ...fields, jokesterId: userId }
   });
-  return (0, import_node7.redirect)(`/jokes/${joke.id}`);
+  return (0, import_node8.redirect)(`/jokes/${joke.id}`);
 };
 function NewJokeRoute() {
   var _a, _b, _c, _d, _e, _f, _g, _h;
@@ -602,7 +661,7 @@ function NewJokeRoute() {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { children: "Add your own hilarious joke" }, void 0, !1, {
       fileName: "app/routes/jokes/new.tsx",
-      lineNumber: 58,
+      lineNumber: 67,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("form", { method: "post", children: [
@@ -623,24 +682,24 @@ function NewJokeRoute() {
             !1,
             {
               fileName: "app/routes/jokes/new.tsx",
-              lineNumber: 63,
+              lineNumber: 72,
               columnNumber: 13
             },
             this
           )
         ] }, void 0, !0, {
           fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 61,
+          lineNumber: 70,
           columnNumber: 11
         }, this),
         (_d = actionData == null ? void 0 : actionData.fieldErrors) != null && _d.name ? /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { className: "form-validation-error", role: "alert", id: "name-error", children: actionData.fieldErrors.name }, void 0, !1, {
           fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 74,
+          lineNumber: 83,
           columnNumber: 13
         }, this) : null
       ] }, void 0, !0, {
         fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 60,
+        lineNumber: 69,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
@@ -659,14 +718,14 @@ function NewJokeRoute() {
             !1,
             {
               fileName: "app/routes/jokes/new.tsx",
-              lineNumber: 82,
+              lineNumber: 91,
               columnNumber: 13
             },
             this
           )
         ] }, void 0, !0, {
           fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 80,
+          lineNumber: 89,
           columnNumber: 11
         }, this),
         (_h = actionData == null ? void 0 : actionData.fieldErrors) != null && _h.content ? /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(
@@ -681,47 +740,66 @@ function NewJokeRoute() {
           !1,
           {
             fileName: "app/routes/jokes/new.tsx",
-            lineNumber: 94,
+            lineNumber: 103,
             columnNumber: 13
           },
           this
         ) : null
       ] }, void 0, !0, {
         fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 79,
+        lineNumber: 88,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { children: [
         actionData != null && actionData.formError ? /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { className: "form-validation-error", role: "alert", children: actionData.formError }, void 0, !1, {
           fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 105,
+          lineNumber: 114,
           columnNumber: 13
         }, this) : null,
         /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("button", { type: "submit", className: "button", children: "Add" }, void 0, !1, {
           fileName: "app/routes/jokes/new.tsx",
-          lineNumber: 109,
+          lineNumber: 118,
           columnNumber: 11
         }, this)
       ] }, void 0, !0, {
         fileName: "app/routes/jokes/new.tsx",
-        lineNumber: 103,
+        lineNumber: 112,
         columnNumber: 9
       }, this)
     ] }, void 0, !0, {
       fileName: "app/routes/jokes/new.tsx",
-      lineNumber: 59,
+      lineNumber: 68,
       columnNumber: 7
     }, this)
   ] }, void 0, !0, {
     fileName: "app/routes/jokes/new.tsx",
-    lineNumber: 57,
+    lineNumber: 66,
     columnNumber: 5
   }, this);
+}
+function CatchBoundary4() {
+  if ((0, import_react7.useCatch)().status === 401)
+    return /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { className: "error-container", children: [
+      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("p", { children: "You must be logged in to create a joke." }, void 0, !1, {
+        fileName: "app/routes/jokes/new.tsx",
+        lineNumber: 133,
+        columnNumber: 9
+      }, this),
+      /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)(import_react7.Link, { to: "/login", children: "Login" }, void 0, !1, {
+        fileName: "app/routes/jokes/new.tsx",
+        lineNumber: 134,
+        columnNumber: 9
+      }, this)
+    ] }, void 0, !0, {
+      fileName: "app/routes/jokes/new.tsx",
+      lineNumber: 132,
+      columnNumber: 7
+    }, this);
 }
 function ErrorBoundary4() {
   return /* @__PURE__ */ (0, import_jsx_dev_runtime7.jsxDEV)("div", { className: "error-container", children: "Something unexpected went wrong. Sorry about that." }, void 0, !1, {
     fileName: "app/routes/jokes/new.tsx",
-    lineNumber: 120,
+    lineNumber: 142,
     columnNumber: 5
   }, this);
 }
@@ -1046,7 +1124,7 @@ function Login() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "2631d665", entry: { module: "/build/entry.client-IJY46RK4.js", imports: ["/build/_shared/chunk-QRG3ZO5C.js", "/build/_shared/chunk-5KL4PAQL.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-L65GYLGQ.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-D6BWCO3V.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes": { id: "routes/jokes", parentId: "root", path: "jokes", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes-G3WDYAMS.js", imports: ["/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/$jokeId": { id: "routes/jokes/$jokeId", parentId: "routes/jokes", path: ":jokeId", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/$jokeId-B2U2U742.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/jokes/index": { id: "routes/jokes/index", parentId: "routes/jokes", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/jokes/index-WBARWWSA.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/jokes/new": { id: "routes/jokes/new", parentId: "routes/jokes", path: "new", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/new-NWTJVXPU.js", imports: ["/build/_shared/chunk-K5KAN4F5.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !0 }, "routes/login": { id: "routes/login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/login-XXB4EYTK.js", imports: ["/build/_shared/chunk-K5KAN4F5.js", "/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-URVIM235.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-2631D665.js" };
+var assets_manifest_default = { version: "33405343", entry: { module: "/build/entry.client-MMNQON54.js", imports: ["/build/_shared/chunk-5QPC47NZ.js", "/build/_shared/chunk-5KL4PAQL.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-4IB7HG4E.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-5YI55RQR.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes": { id: "routes/jokes", parentId: "root", path: "jokes", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes-JUM4YCGD.js", imports: ["/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/$jokeId": { id: "routes/jokes/$jokeId", parentId: "routes/jokes", path: ":jokeId", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/$jokeId-EDDIBCMX.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/jokes/index": { id: "routes/jokes/index", parentId: "routes/jokes", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/jokes/index-Z2BTI73S.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/jokes/new": { id: "routes/jokes/new", parentId: "routes/jokes", path: "new", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/new-MAWWTAMU.js", imports: ["/build/_shared/chunk-K5KAN4F5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/login": { id: "routes/login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/login-WMBEYEY7.js", imports: ["/build/_shared/chunk-K5KAN4F5.js", "/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-URVIM235.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-33405343.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public\\build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
