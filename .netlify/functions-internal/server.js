@@ -474,31 +474,51 @@ var jokeId_exports = {};
 __export(jokeId_exports, {
   CatchBoundary: () => CatchBoundary2,
   ErrorBoundary: () => ErrorBoundary2,
+  action: () => action2,
   default: () => JokeRoute,
   loader: () => loader3
 });
 var import_node4 = require("@remix-run/node"), import_react5 = require("@remix-run/react");
-var import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), loader3 = async ({ params }) => {
-  let joke = await db.joke.findUnique({
+var import_jsx_dev_runtime5 = require("react/jsx-dev-runtime"), loader3 = async ({ params, request }) => {
+  let userId = await getUserId(request), joke = await db.joke.findUnique({
     where: { id: params.jokeId }
   });
   if (!joke)
     throw new Response("What a joke! Not found.", {
       status: 404
     });
-  return (0, import_node4.json)({ joke });
+  return (0, import_node4.json)({
+    joke,
+    isOwner: userId === joke.jokesterId
+  });
+}, action2 = async ({ params, request }) => {
+  let form = await request.formData();
+  if (form.get("intent") !== "delete")
+    throw new Response(`The intent ${form.get("intent")} is not supported`, {
+      status: 400
+    });
+  let userId = await requireUserId(request), joke = await db.joke.findUnique({
+    where: { id: params.jokeId }
+  });
+  if (!joke)
+    throw new Response("Can't delete what does not exist", {
+      status: 404
+    });
+  if (joke.jokesterId !== userId)
+    throw new Response("Pssh, nice try. That's not your joke", { status: 403 });
+  return await db.joke.delete({ where: { id: params.jokeId } }), (0, import_node4.redirect)("/jokes");
 };
 function JokeRoute() {
   let data = (0, import_react5.useLoaderData)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { children: [
     /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("p", { children: "Here's your hilarious joke:" }, void 0, !1, {
       fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 26,
+      lineNumber: 52,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("p", { children: data.joke.content }, void 0, !1, {
       fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 27,
+      lineNumber: 53,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)(import_react5.Link, { to: ".", children: [
@@ -506,34 +526,62 @@ function JokeRoute() {
       " Permalink"
     ] }, void 0, !0, {
       fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 28,
+      lineNumber: 54,
       columnNumber: 7
-    }, this)
+    }, this),
+    data.isOwner ? /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("form", { method: "post", children: /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("button", { className: "button", name: "intent", type: "submit", value: "delete", children: "Delete" }, void 0, !1, {
+      fileName: "app/routes/jokes/$jokeId.tsx",
+      lineNumber: 57,
+      columnNumber: 11
+    }, this) }, void 0, !1, {
+      fileName: "app/routes/jokes/$jokeId.tsx",
+      lineNumber: 56,
+      columnNumber: 9
+    }, this) : null
   ] }, void 0, !0, {
     fileName: "app/routes/jokes/$jokeId.tsx",
-    lineNumber: 25,
+    lineNumber: 51,
     columnNumber: 5
   }, this);
 }
 function CatchBoundary2() {
   let caught = (0, import_react5.useCatch)(), params = (0, import_react5.useParams)();
-  if (caught.status === 404)
-    return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: [
-      'Huh? What the heck is "',
-      params.jokeId,
-      '"?'
-    ] }, void 0, !0, {
-      fileName: "app/routes/jokes/$jokeId.tsx",
-      lineNumber: 38,
-      columnNumber: 7
-    }, this);
-  throw new Error(`Unhandled error: ${caught.status}`);
+  switch (caught.status) {
+    case 400:
+      return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: "What you're trying to do is not allowed." }, void 0, !1, {
+        fileName: "app/routes/jokes/$jokeId.tsx",
+        lineNumber: 72,
+        columnNumber: 9
+      }, this);
+    case 404:
+      return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: [
+        "Huh? What the heck is ",
+        params.jokeId,
+        "?"
+      ] }, void 0, !0, {
+        fileName: "app/routes/jokes/$jokeId.tsx",
+        lineNumber: 79,
+        columnNumber: 9
+      }, this);
+    case 403:
+      return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: [
+        "Sorry, but ",
+        params.jokeId,
+        " is not your joke."
+      ] }, void 0, !0, {
+        fileName: "app/routes/jokes/$jokeId.tsx",
+        lineNumber: 86,
+        columnNumber: 9
+      }, this);
+    default:
+      throw new Error(`Unhandled error: ${caught.status}`);
+  }
 }
 function ErrorBoundary2() {
   let { jokeId } = (0, import_react5.useParams)();
   return /* @__PURE__ */ (0, import_jsx_dev_runtime5.jsxDEV)("div", { className: "error-container", children: `There was an error loading joke by the id ${jokeId}. Sorry.` }, void 0, !1, {
     fileName: "app/routes/jokes/$jokeId.tsx",
-    lineNumber: 49,
+    lineNumber: 100,
     columnNumber: 5
   }, this);
 }
@@ -609,7 +657,7 @@ var new_exports = {};
 __export(new_exports, {
   CatchBoundary: () => CatchBoundary4,
   ErrorBoundary: () => ErrorBoundary4,
-  action: () => action2,
+  action: () => action3,
   default: () => NewJokeRoute,
   loader: () => loader5
 });
@@ -632,7 +680,7 @@ function validateJokeName(name) {
   if (name.length < 3)
     return "That joke's name is too short";
 }
-var action2 = async ({ request }) => {
+var action3 = async ({ request }) => {
   let userId = await requireUserId(request), form = await request.formData(), name = form.get("name"), content = form.get("content");
   if (typeof name != "string" || typeof content != "string")
     return badRequest({
@@ -807,7 +855,7 @@ function ErrorBoundary4() {
 // app/routes/login.tsx
 var login_exports = {};
 __export(login_exports, {
-  action: () => action3,
+  action: () => action4,
   default: () => Login,
   links: () => links4
 });
@@ -831,7 +879,7 @@ function validatePassword(password) {
 function validateUrl(url) {
   return ["/jokes", "/", "https://remix.run"].includes(url) ? url : "/jokes";
 }
-var action3 = async ({ request }) => {
+var action4 = async ({ request }) => {
   let form = await request.formData(), loginType = form.get("loginType"), username = form.get("username"), password = form.get("password"), redirectTo = validateUrl(form.get("redirectTo") || "/jokes");
   if (typeof loginType != "string" || typeof username != "string" || typeof password != "string" || typeof redirectTo != "string")
     return badRequest({
@@ -1124,7 +1172,7 @@ function Login() {
 }
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
-var assets_manifest_default = { version: "33405343", entry: { module: "/build/entry.client-MMNQON54.js", imports: ["/build/_shared/chunk-5QPC47NZ.js", "/build/_shared/chunk-5KL4PAQL.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-4IB7HG4E.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-5YI55RQR.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes": { id: "routes/jokes", parentId: "root", path: "jokes", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes-JUM4YCGD.js", imports: ["/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/$jokeId": { id: "routes/jokes/$jokeId", parentId: "routes/jokes", path: ":jokeId", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/$jokeId-EDDIBCMX.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/jokes/index": { id: "routes/jokes/index", parentId: "routes/jokes", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/jokes/index-Z2BTI73S.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/jokes/new": { id: "routes/jokes/new", parentId: "routes/jokes", path: "new", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/new-MAWWTAMU.js", imports: ["/build/_shared/chunk-K5KAN4F5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/login": { id: "routes/login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/login-WMBEYEY7.js", imports: ["/build/_shared/chunk-K5KAN4F5.js", "/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-URVIM235.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-33405343.js" };
+var assets_manifest_default = { version: "6ab6740b", entry: { module: "/build/entry.client-MMNQON54.js", imports: ["/build/_shared/chunk-5QPC47NZ.js", "/build/_shared/chunk-5KL4PAQL.js"] }, routes: { root: { id: "root", parentId: void 0, path: "", index: void 0, caseSensitive: void 0, module: "/build/root-4IB7HG4E.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/index": { id: "routes/index", parentId: "root", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/index-5YI55RQR.js", imports: void 0, hasAction: !1, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes": { id: "routes/jokes", parentId: "root", path: "jokes", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes-JUM4YCGD.js", imports: ["/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !1, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/jokes/$jokeId": { id: "routes/jokes/$jokeId", parentId: "routes/jokes", path: ":jokeId", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/$jokeId-HHHFIQXM.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/jokes/index": { id: "routes/jokes/index", parentId: "routes/jokes", path: void 0, index: !0, caseSensitive: void 0, module: "/build/routes/jokes/index-Z2BTI73S.js", imports: void 0, hasAction: !1, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/jokes/new": { id: "routes/jokes/new", parentId: "routes/jokes", path: "new", index: void 0, caseSensitive: void 0, module: "/build/routes/jokes/new-MAWWTAMU.js", imports: ["/build/_shared/chunk-K5KAN4F5.js"], hasAction: !0, hasLoader: !0, hasCatchBoundary: !0, hasErrorBoundary: !0 }, "routes/login": { id: "routes/login", parentId: "root", path: "login", index: void 0, caseSensitive: void 0, module: "/build/routes/login-WMBEYEY7.js", imports: ["/build/_shared/chunk-K5KAN4F5.js", "/build/_shared/chunk-65B4HZGS.js", "/build/_shared/chunk-C6L53BW6.js"], hasAction: !0, hasLoader: !1, hasCatchBoundary: !1, hasErrorBoundary: !1 }, "routes/logout": { id: "routes/logout", parentId: "root", path: "logout", index: void 0, caseSensitive: void 0, module: "/build/routes/logout-URVIM235.js", imports: void 0, hasAction: !0, hasLoader: !0, hasCatchBoundary: !1, hasErrorBoundary: !1 } }, url: "/build/manifest-6AB6740B.js" };
 
 // server-entry-module:@remix-run/dev/server-build
 var assetsBuildDirectory = "public\\build", future = { v2_meta: !1 }, publicPath = "/build/", entry = { module: entry_server_exports }, routes = {
